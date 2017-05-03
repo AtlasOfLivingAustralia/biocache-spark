@@ -10,7 +10,7 @@ import org.apache.spark.sql.SQLContext
   */
 object SOLRExport {
     def main(args: Array[String]) {
-      val conf = new SparkConf().setAppName("Bulkload example")
+      val conf = new SparkConf().setAppName("Spark SOLR example")
       conf.setIfMissing("spark.master", "local[2]")
       val sc = new SparkContext(conf)
       val sqlContext = new SQLContext(sc)
