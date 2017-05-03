@@ -22,8 +22,10 @@ object SOLRExport {
         ).load
           .filter("data_resource_uid='dr819'")
 
-        println(occurrences.count())
-
+        occurrences.printSchema()
+        occurrences.show()
+        occurrences.registerTempTable("occurrence")
+        sqlContext.sql("SELECT family,count(*) AS cnt FROM occurrence GROUP BY family ORDER BY cnt DESC").show()
 
 
       } finally {
