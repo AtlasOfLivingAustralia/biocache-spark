@@ -13,6 +13,11 @@
         <scala.tools.version>2.10</scala.tools.version>
         <scala.version>2.10.4</scala.version>
         <spark.version>1.6.2</spark.version>
+        <!--
+          Important: This must match the target Spark and SOLR versions
+          See the compatibaility chart on https://github.com/lucidworks/spark-solr
+        -->
+        <spark-solr.version>2.0.4</spark-solr.version>
     </properties>
 
     <profiles>
@@ -37,6 +42,11 @@
                             <artifactId>snappy-java</artifactId>
                         </exclusion>
                     </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-sql_${scala.tools.version}</artifactId>
+                    <version>${spark.version}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -88,6 +98,12 @@
             <version>${spark.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- This is only required for the test of Spark based exporting and may be removed -->
+        <dependency>
+            <groupId>com.lucidworks.spark</groupId>
+            <artifactId>spark-solr</artifactId>
+            <version>${spark-solr.version}</version>
+        </dependency>
     </dependencies>
-    
+
 </project>
