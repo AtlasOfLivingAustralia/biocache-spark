@@ -1,9 +1,9 @@
-##Biocache Spark 
+## Biocache Spark 
 A collection on Spark services for working with Biocache based content (Cassandra, SOLR).
   
 This is currently an exploratory project.
 
-###Export to GBIF
+### Export to GBIF
 
 For each resource the following sequence is run:
   1. Export the processed content from within Cassandra (?/ SOLR) into a CSV
