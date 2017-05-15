@@ -46,10 +46,17 @@ object CassandraExporter {
         }
       )
 
-      val exportQuery = "SELECT " + fields.map(field => "first(clean(" + field.toLowerCase + ")) AS " + field.toLowerCase).mkString(",") + " FROM occ"
+      val exportQuery = "SELECT " + fields.map(field => "clean(" + field.toLowerCase + ") AS " + field.toLowerCase).mkString(",") + " FROM occ"
 
-      // Write a single parquet file of cleaned data per data resource
+//       Write a single parquet file of cleaned data per data resource
       sqlContext.sql(exportQuery).write.partitionBy("dataresourceuid").format("parquet").save("/data/biocache-exports/transient/")
+
+
+//      sqlContext.sql("SELECT dataresourceuid, uuid FROM occ")
+//      .write
+//        .partitionBy("dataresourceuid")
+//        .format("parquet")
+//        .save("/data/biocache-exports/transient/")
 
       // The following is a workaround to circumvent the fact that the CSV writers in Spark 1.6 are not partitionable.
 
