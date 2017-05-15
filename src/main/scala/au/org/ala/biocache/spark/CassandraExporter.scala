@@ -4,30 +4,27 @@ import java.io.File
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.cassandra._
+
 /**
-  * Created by mar759 on 3/05/2017.
+  * This is a test to evaluate the feasibility of exporting from Cassandra using Spark.
   */
 object CassandraExporter {
 
-  val fields = List("uuid", "catalogNumber", "collectionCode", "institutionCode", "scientificName_p", "recordedBy",
+  val fields = List("dataresourceuid","uuid", "catalogNumber", "collectionCode", "institutionCode", "scientificName_p", "recordedBy",
     "taxonConceptID_p",
-    "taxonRank", "kingdom_p", "phylum_p", "classs_p", "order_p", "family_p", "genus_p", "species_p",
-    "decimalLatitude_p", "decimalLongitude_p", "coordinatePrecision", "coordinateUncertaintyInMeters",
+    "taxonRank_p", "kingdom_p", "phylum_p", "classs_p", "order_p", "family_p", "genus_p", "species_p"
+    ,
+    "decimalLatitude_p", "decimalLongitude_p", "coordinatePrecision", "coordinateUncertaintyInMeters_p",
     "maximumElevationInMeters", "minimumElevationInMeters",
     "minimumDepthInMeters", "maximumDepthInMeters", "continent", "country", "stateProvince", "county", "locality",
-    "year_p", "month_p", "day_p", "basisOfRecord", "identifiedBy", "occurrenceRemarks", "locationRemarks",
-    "recordNumber", "vernacularName", "individualCount", "eventID", "geodeticDatum",
-     "eventDate_p"
+    "year_p", "month_p", "day_p", "basisOfRecord_p", "identifiedBy", "occurrenceRemarks", "locationRemarks",
+    "recordNumber", "vernacularName_p", "individualCount", "eventID", "geodeticDatum_p",
+    "eventDate_p"
   )
 
   def main(args:Array[String]) : Unit = {
 
-    if(args.length != 1){
-      println("Please supply a data resource UID")
-      System.exit(1)
-    }
-
-    val outputDirPath = "/data/biocache-exports/" + args(0)
+    val outputDirPath = "/data/biocache-exports/"
     val outputDir = new File(outputDirPath)
     if(outputDir.exists()) {
       outputDir.delete()
@@ -36,20 +33,35 @@ object CassandraExporter {
     val conf = new SparkConf().setAppName("Cassandra Bulk Export")
     conf.setIfMissing("spark.master", "local[2]")
     val sc = new SparkContext(conf)
-    val sqlContext = new SQLContext(sc)
-    val df = sqlContext.read.cassandraFormat("occ", "occ").load()
-    df.registerTempTable("occ")
-    sqlContext.udf.register("clean", (input: String) =>
-      if(input != null){
-        input.replaceAll("[\\t\\n\\r]", " ")
-      } else {
-        ""
-      }
-    )
 
-    val sql = "SELECT " + fields.map("clean(" + _.toLowerCase + ")").mkString(",") + " FROM occ where dataresourceuid = '" + args(0) + "'"
-    println(sql)
-    val df2 = sqlContext.sql(sql)
-    df2.write.format("com.databricks.spark.csv").save(outputDirPath)
+    try {
+      val sqlContext = new SQLContext(sc)
+      val df = sqlContext.read.cassandraFormat("occ", "occ").load()
+      df.registerTempTable("occ")
+      sqlContext.udf.register("clean", (input: String) =>
+        if(input != null){
+          input.replaceAll("[\\t\\n\\r]", " ")
+        } else {
+          ""
+        }
+      )
+
+      val exportQuery = "SELECT " + fields.map("first(clean(" + _.toLowerCase + "))").mkString(",") + " FROM occ GROUP BY dataresourceuid"
+
+      sqlContext.sql(exportQuery).show()
+
+      // The following is a workaround to circumvent the fact that the CSV writers in Spark 1.6 are not partitionable.
+      // We save as a parquet file per family, and then read each parquet file and safe it as a CSV.
+      df.write.partitionBy("dataresourceuid").format("parquet").save("/data/biocache-exports/transient/")
+      sqlContext.sql(exportQuery).collect().map(dataresourceuid => {
+        val drUid = dataresourceuid.getString(0)
+        val df = sqlContext.read.format("parquet").load("/data/biocache-exports/transient/dataresourceuid=" + drUid)
+        df.write.format("com.databricks.spark.csv").save("/data/biocache-exports/" + drUid)
+      })
+
+    } finally {
+      sc.stop()
+    }
+
   }
 }
