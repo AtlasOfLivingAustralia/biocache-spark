@@ -1,0 +1,9 @@
+appName: "Biocache exporter to generate DwC-A"
+deleteOutputDir: true
+outputDir: "/data/biocache-exports"
+collectoryUrl: "https://registry.nbnatlas.org"
+cassandra:
+  host: "127.0.0.1"
+  port: "9042"
+  table: "occ"
+  keySpace: "occ"
