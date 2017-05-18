@@ -108,7 +108,7 @@ object CassandraExporter {
         val targetDir = config.outputDir + "/" + drUid
 
         val df = sqlContext.read.format("parquet").load(sourceDir)
-        df.write.format("com.databricks.spark.csv").option("header", "true").save(targetDir)
+        df.write.format("com.databricks.spark.csv").save(targetDir)
 
         // working directory
         val dir = new File(targetDir)
