@@ -49,7 +49,7 @@ object CassandraExporter {
     "  clean(coordinateprecision) AS coordinatePrecision, " +
     "  clean(coordinateuncertaintyinmeters_p) AS coordinateUncertaintyInMeters, " +
     "  clean(maximumelevationinmeters) AS maximumElevationInMeters, " +
-    "  clean(minimumelevationinmeters) ASminimumElevationInMetersoccurrenceID, " +
+    "  clean(minimumelevationinmeters) AS minimumElevationInMeters, " +
     "  clean(minimumdepthinmeters) AS minimumDepthInMeters, " +
     "  clean(maximumdepthinmeters) AS maximumDepthInMeters, " +
     "  clean(continent) AS continent, " +
@@ -70,7 +70,7 @@ object CassandraExporter {
     "  clean(eventid) AS eventID, " +
     "  clean(geodeticdatum_p) AS geodeticDatum, " +
     "  clean(eventdate_p) AS eventDate " +
-    "FROM occurrence";
+    "FROM occurrence"
 
 
   def main(args:Array[String]) : Unit = {
@@ -111,7 +111,7 @@ object CassandraExporter {
         df.write.format("com.databricks.spark.csv").option("header", "true").save(targetDir)
 
         // working directory
-        val dir = new File(targetDir);
+        val dir = new File(targetDir)
 
         // Download the EML from the collectory WS
         new URL(config.collectoryUrl + "/ws/eml/" + drUid) #> new File(dir, "eml.xml") !!

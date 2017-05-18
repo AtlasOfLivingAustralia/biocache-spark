@@ -17,7 +17,7 @@ object Configurations {
   /**
     * Returns the application cofiguration for the given file.
     *
-    * @param file The YAML config file to read
+    * @param filePath The YAML config file to read
     * @return The application configuration
     */
   def fromFile(filePath : String) : CassandraExportConfiguration = {
