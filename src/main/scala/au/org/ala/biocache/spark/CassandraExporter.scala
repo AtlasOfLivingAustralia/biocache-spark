@@ -43,19 +43,16 @@ object CassandraExporter {
     "  clean(order_p) AS orderr, " + // reserved name in SQL
     "  clean(family_p) AS family, " +
     "  clean(genus_p) AS genus, " +
-    "  clean(species_p) AS species, " +
     "  clean(decimallatitude_p) AS decimalLatitude, " +
     "  clean(decimallongitude_p) AS decimalLongitude, " +
-    "  clean(coordinateprecision) AS coordinatePrecision, " +
     "  clean(coordinateuncertaintyinmeters_p) AS coordinateUncertaintyInMeters, " +
     "  clean(maximumelevationinmeters) AS maximumElevationInMeters, " +
     "  clean(minimumelevationinmeters) AS minimumElevationInMeters, " +
     "  clean(minimumdepthinmeters) AS minimumDepthInMeters, " +
     "  clean(maximumdepthinmeters) AS maximumDepthInMeters, " +
     "  clean(continent) AS continent, " +
-    "  clean(country) AS country, " +
-    "  clean(stateprovince) AS stateProvince, " +
-    "  clean(county) AS county, " +
+    "  clean(country_p) AS country, " +
+    "  clean(stateprovince_p) AS stateProvince, " +
     "  clean(locality) AS locality, " +
     "  clean(year_p) AS year, " +
     "  clean(month_p) AS month, " +
@@ -72,7 +69,6 @@ object CassandraExporter {
     "  clean(eventdate_p) AS eventDate " +
     "FROM occurrence"
 
-
   def main(args:Array[String]) : Unit = {
     checkArgs(args) // sanitize input
     val config: CassandraExportConfiguration = Configurations.fromFile(args(0))
@@ -83,7 +79,7 @@ object CassandraExporter {
     conf.set("spark.cassandra.connection.host", config.cassandra.host)
     conf.set("spark.cassandra.connection.port", config.cassandra.port)
     val sc = new SparkContext(conf)
-
+    sc.setLogLevel("WARN")
     try {
       val sqlContext = new SQLContext(sc)
       val df = sqlContext.read.cassandraFormat(config.cassandra.table, config.cassandra.keySpace).load()
@@ -131,7 +127,7 @@ object CassandraExporter {
         }).foreach(_.delete())
 
         // zip the targetDir into a DwC-A file
-        val zipCmd = "zip -r -j " + targetDir + ".dwca " + targetDir
+        val zipCmd = "zip -r -j " + targetDir + ".zip " + targetDir
         zipCmd !!
 
         // clean up the targetDir

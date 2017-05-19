@@ -23,7 +23,7 @@ object Configurations {
   def fromFile(filePath : String) : CassandraExportConfiguration = {
     //val confUrl = Resources.getResource(file)
     val mapper = new ObjectMapper(new YAMLFactory())
-    val configAsString = Files.toString(new File(filePath), Charsets.UTF_8);
+    val configAsString = Files.toString(new File(filePath), Charsets.UTF_8)
     val config: CassandraExportConfiguration = mapper.readValue(configAsString, classOf[CassandraExportConfiguration])
     config
   }

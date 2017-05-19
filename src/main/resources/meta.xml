@@ -19,32 +19,29 @@
     <field index="11" term="http://rs.tdwg.org/dwc/terms/order" />
     <field index="12" term="http://rs.tdwg.org/dwc/terms/family" />
     <field index="13" term="http://rs.tdwg.org/dwc/terms/genus" />
-    <field index="14" term="http://rs.tdwg.org/dwc/terms/specificEpithet" />
-    <field index="15" term="http://rs.tdwg.org/dwc/terms/decimalLatitude" />
-    <field index="16" term="http://rs.tdwg.org/dwc/terms/decimalLongitude" />
-    <field index="17" term="http://rs.tdwg.org/dwc/terms/coordinatePrecision" />
-    <field index="18" term="http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters" />
-    <field index="19" term="http://rs.tdwg.org/dwc/terms/maximumElevationInMeters" />
-    <field index="20" term="http://rs.tdwg.org/dwc/terms/minimumElevationInMeters" />
-    <field index="21" term="http://rs.tdwg.org/dwc/terms/minimumDepthInMeters" />
-    <field index="22" term="http://rs.tdwg.org/dwc/terms/maximumDepthInMeters" />
-    <field index="23" term="http://rs.tdwg.org/dwc/terms/continent" />
-    <field index="24" term="http://rs.tdwg.org/dwc/terms/country" />
-    <field index="25" term="http://rs.tdwg.org/dwc/terms/stateProvince" />
-    <field index="26" term="http://rs.tdwg.org/dwc/terms/county" />
-    <field index="27" term="http://rs.tdwg.org/dwc/terms/locality" />
-    <field index="28" term="http://rs.tdwg.org/dwc/terms/year" />
-    <field index="29" term="http://rs.tdwg.org/dwc/terms/month" />
-    <field index="30" term="http://rs.tdwg.org/dwc/terms/day" />
-    <field index="31" term="http://rs.tdwg.org/dwc/terms/basisOfRecord" />
-    <field index="32" term="http://rs.tdwg.org/dwc/terms/identifiedBy" />
-    <field index="33" term="http://rs.tdwg.org/dwc/terms/occurrenceRemarks" />
-    <field index="34" term="http://rs.tdwg.org/dwc/terms/locationRemarks" />
-    <field index="35" term="http://rs.tdwg.org/dwc/terms/recordNumber" />
-    <field index="36" term="http://rs.tdwg.org/dwc/terms/vernacularName" />
-    <field index="37" term="http://rs.tdwg.org/dwc/terms/individualCount" />
-    <field index="38" term="http://rs.tdwg.org/dwc/terms/eventID" />
-    <field index="39" term="http://rs.tdwg.org/dwc/terms/geodeticDatum" />
-    <field index="40" term="http://rs.tdwg.org/dwc/terms/eventDate" />
+    <field index="14" term="http://rs.tdwg.org/dwc/terms/decimalLatitude" />
+    <field index="15" term="http://rs.tdwg.org/dwc/terms/decimalLongitude" />
+    <field index="16" term="http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters" />
+    <field index="17" term="http://rs.tdwg.org/dwc/terms/maximumElevationInMeters" />
+    <field index="18" term="http://rs.tdwg.org/dwc/terms/minimumElevationInMeters" />
+    <field index="19" term="http://rs.tdwg.org/dwc/terms/minimumDepthInMeters" />
+    <field index="20" term="http://rs.tdwg.org/dwc/terms/maximumDepthInMeters" />
+    <field index="21" term="http://rs.tdwg.org/dwc/terms/continent" />
+    <field index="22" term="http://rs.tdwg.org/dwc/terms/country" />
+    <field index="23" term="http://rs.tdwg.org/dwc/terms/stateProvince" />
+    <field index="24" term="http://rs.tdwg.org/dwc/terms/locality" />
+    <field index="25" term="http://rs.tdwg.org/dwc/terms/year" />
+    <field index="26" term="http://rs.tdwg.org/dwc/terms/month" />
+    <field index="27" term="http://rs.tdwg.org/dwc/terms/day" />
+    <field index="28" term="http://rs.tdwg.org/dwc/terms/basisOfRecord" default="HumanObservation"/>
+    <field index="29" term="http://rs.tdwg.org/dwc/terms/identifiedBy" />
+    <field index="30" term="http://rs.tdwg.org/dwc/terms/occurrenceRemarks" />
+    <field index="31" term="http://rs.tdwg.org/dwc/terms/locationRemarks" />
+    <field index="32" term="http://rs.tdwg.org/dwc/terms/recordNumber" />
+    <field index="33" term="http://rs.tdwg.org/dwc/terms/vernacularName" />
+    <field index="34" term="http://rs.tdwg.org/dwc/terms/individualCount" />
+    <field index="35" term="http://rs.tdwg.org/dwc/terms/eventID" />
+    <field index="36" term="http://rs.tdwg.org/dwc/terms/geodeticDatum" />
+    <field index="37" term="http://rs.tdwg.org/dwc/terms/eventDate" />
   </core>
 </archive>
