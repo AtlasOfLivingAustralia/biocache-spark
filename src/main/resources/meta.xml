@@ -11,8 +11,8 @@
     <field index="3" term="http://rs.tdwg.org/dwc/terms/institutionCode" />
     <field index="4" term="http://rs.tdwg.org/dwc/terms/scientificName" />
     <field index="5" term="http://rs.tdwg.org/dwc/terms/recordedBy" />
-    <field index="6" term="http://rs.tdwg.org/dwc/terms/taxonRank" />
     <field index="7" term="http://rs.tdwg.org/dwc/terms/taxonConceptID" />
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/taxonRank" />
     <field index="8" term="http://rs.tdwg.org/dwc/terms/kingdom" />
     <field index="9" term="http://rs.tdwg.org/dwc/terms/phylum" />
     <field index="10" term="http://rs.tdwg.org/dwc/terms/class" />

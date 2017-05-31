@@ -8,6 +8,7 @@ import com.google.common.io.Resources
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.cassandra._
+import org.apache.spark.storage.StorageLevel
 
 import scala.sys.process._
 
@@ -24,6 +25,7 @@ import scala.sys.process._
 object CassandraExporter {
   val usage = "Usage: CassandraExporter configFile"
   val pathTransient = "/transient"
+  val pathExport = "/full-export"
 
   // export definition which cleans data and maps to DwC terms
   val exportSQL =
@@ -75,36 +77,49 @@ object CassandraExporter {
     init(config)
 
     val conf = new SparkConf().setAppName(config.appName)
-    conf.setIfMissing("spark.master", "local[2]")
+    conf.setIfMissing("spark.master", "local[*]")
     conf.set("spark.cassandra.connection.host", config.cassandra.host)
     conf.set("spark.cassandra.connection.port", config.cassandra.port)
+
+    // because we export only a narrow selection, the Cassandra connector will over estimate the number spark
+    // partitions needed.  We agressively increase that from the default of 64 to compensate
+    //conf.set("spark.cassandra.input.split.size_in_mb", "8192")
+    // Removed because we pass this on the command line instead using --conf 'spark.cassandra.input.split.size_in_mb=8192'
+
     val sc = new SparkContext(conf)
     sc.setLogLevel("WARN")
     try {
       val sqlContext = new SQLContext(sc)
-      val df = sqlContext.read.cassandraFormat(config.cassandra.table, config.cassandra.keySpace).load()
-      df.registerTempTable("occurrence")
+
+      val source = sqlContext.read.cassandraFormat(config.cassandra.table, config.cassandra.keySpace).load()
+      source.registerTempTable("occurrence")
 
       // register the UDF to cleans fields suitable for a CSV
       sqlContext.udf.register("clean", (input: String) =>
         if(input == null) "" else input.replaceAll("[\\t\\n\\r]", " ").trim
       )
 
-      // Write a single parquet file of cleaned data per data resource
-      sqlContext.sql(exportSQL).write.partitionBy("dataResourceUid").format("parquet")
-        .save(config.outputDir + pathTransient)
+      val df = sqlContext.sql(exportSQL)
 
-      // get the dataresource keys
-      val resourceUids = sqlContext.sql("SELECT DISTINCT dataresourceuid FROM occurrence").collect()
+      // NOTE: This is what was actually ran in the first version
+      // Writes a single parquet file (default gzip compression) of cleaned data from Cassandra
+      //df.write.format("parquet").save(config.outputDir + pathExport)
 
-      // for each resource, read the parquet file and write a CSV
-      resourceUids.map(dataresourceuid => {
-        val drUid = dataresourceuid.getString(0)
-        val sourceDir = config.outputDir + pathTransient + "/dataresourceuid=" + drUid
+      // We ran the line above, and then continued again with this
+      // If you have an export of cassandra already, you can use this instead
+      //val df = sqlContext.read.format("parquet").load("/data/biocache-exports-SINGLE-GOOD/transient")
+
+      val resourceUids = df.select(df("dataResourceUid")).distinct.collect()
+
+      for (id <- resourceUids) {
+        val drUid = id(0) // extract the actual resource id
+
+        var filter = "dataResourceUid = '" + drUid + "'"
+        println("Starting " + filter)
         val targetDir = config.outputDir + "/" + drUid
 
-        val df = sqlContext.read.format("parquet").load(sourceDir)
-        df.write.format("com.databricks.spark.csv").save(targetDir)
+        // filter the source to the DR of interest, remove unused columns and save
+        df.filter(filter).drop("dataResourceUid").write.format("com.databricks.spark.csv").save(targetDir)
 
         // working directory
         val dir = new File(targetDir)
@@ -133,7 +148,7 @@ object CassandraExporter {
         // clean up the targetDir
         val rmCmd = "rm -fr " + targetDir
         rmCmd !!
-      })
+      }
 
     } finally {
       sc.stop()
